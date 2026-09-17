@@ -1,7 +1,7 @@
 import math
 import cmath
+import re
 import flet as ft
-
 
 def main(page: ft.Page):
     page.title = "Математический калькулятор"
@@ -12,10 +12,6 @@ def main(page: ft.Page):
     page.scroll = ft.ScrollMode.AUTO
 
     stroka = {"value": ""}
-
-    # -----------------------------
-    # Приветствие
-    # -----------------------------
 
     welcome_ru = ft.Text(
         value="Добро пожаловать",
@@ -31,10 +27,6 @@ def main(page: ft.Page):
         color="#555555",
         text_align=ft.TextAlign.CENTER,
     )
-
-    # -----------------------------
-    # Экран калькулятора
-    # -----------------------------
 
     rezultat = ft.Text(
         value="0",
@@ -55,31 +47,20 @@ def main(page: ft.Page):
         border_radius=12,
     )
 
-    # -----------------------------
-    # Математические функции
-    # -----------------------------
-
     def sin_deg(x):
-        return math.sin(math.radians(x))
+        return cmath.sin(x * math.pi / 180)
 
     def cos_deg(x):
-        return math.cos(math.radians(x))
+        return cmath.cos(x * math.pi / 180)
 
     def tan_deg(x):
-        if abs(math.cos(math.radians(x))) < 1e-12:
+        angle = x * math.pi / 180
+        if abs(cmath.cos(angle)) < 1e-12:
             raise ValueError("Тангенс не существует")
-
-        return math.tan(math.radians(x))
+        return cmath.tan(angle)
 
     def sqrt_func(x):
-        if x < 0:
-            return cmath.sqrt(complex(x, 0))
-
-        return math.sqrt(x)
-
-    # -----------------------------
-    # Показать результат
-    # -----------------------------
+        return cmath.sqrt(x)
 
     def pokazat(tekst=None):
         if tekst is None:
@@ -92,13 +73,16 @@ def main(page: ft.Page):
 
         page.update()
 
-    # -----------------------------
-    # Вычисление
-    # -----------------------------
+    def podgotovit_complex(primer):
+        primer = primer.replace(" ", "")
+        if re.search(r"[^0-9+\-*/().a-zA-Z√×÷i]", primer):
+            raise ValueError("Недопустимые символы")
+        return primer.replace("i", "j")
 
     def vychislit(primer):
         primer = primer.replace("×", "*")
         primer = primer.replace("÷", "/")
+        primer = podgotovit_complex(primer)
 
         proverka = (
             primer
@@ -106,9 +90,10 @@ def main(page: ft.Page):
             .replace("cos", "")
             .replace("tan", "")
             .replace("sqrt", "")
+            .replace("j", "")
         )
 
-        razresheno = set("0123456789.+-*/() ")
+        razresheno = set("0123456789.+-*/()")
 
         if not set(proverka).issubset(razresheno):
             raise ValueError("Недопустимые символы")
@@ -119,55 +104,51 @@ def main(page: ft.Page):
             "cos": cos_deg,
             "tan": tan_deg,
             "sqrt": sqrt_func,
+            "j": 1j,
         }
 
         return eval(primer, bezopasno, {})
 
-    # -----------------------------
-    # Красивый вывод числа
-    # -----------------------------
-
     def krasivoe_chislo(value):
-
         if isinstance(value, complex):
-            real = 0 if abs(value.real) < 1e-12 else value.real
-            imag = 0 if abs(value.imag) < 1e-12 else value.imag
+            real = value.real
+            imag = value.imag
+
+            if abs(real) < 1e-12:
+                real = 0
+
+            if abs(imag) < 1e-12:
+                imag = 0
 
             if imag == 0:
                 return f"{real:g}"
 
             if real == 0:
-
                 if abs(imag - 1) < 1e-12:
                     return "i"
-
                 if abs(imag + 1) < 1e-12:
                     return "-i"
-
                 return f"{imag:g}i"
 
             sign = "+" if imag >= 0 else "-"
 
-            return f"{real:g} {sign} {abs(imag):g}i"
+            if abs(abs(imag) - 1) < 1e-12:
+                imag_text = "i"
+            else:
+                imag_text = f"{abs(imag):g}i"
+
+            return f"{real:g} {sign} {imag_text}"
 
         if isinstance(value, float):
-
             if abs(value) < 1e-12:
                 value = 0.0
-
             if value.is_integer():
                 return str(int(value))
-
             return f"{value:g}"
 
         return str(value)
 
-    # -----------------------------
-    # Нажатие "="
-    # -----------------------------
-
     def poschitat():
-
         try:
             primer = stroka["value"]
 
@@ -175,21 +156,16 @@ def main(page: ft.Page):
                 return
 
             answer = vychislit(primer)
-
             vyvod = krasivoe_chislo(answer)
 
             stroka["value"] = vyvod
-
             pokazat(vyvod)
 
         except ZeroDivisionError:
-
             stroka["value"] = ""
-
             pokazat("Деление на 0")
 
         except ValueError as error:
-
             stroka["value"] = ""
 
             if str(error) == "Тангенс не существует":
@@ -198,91 +174,53 @@ def main(page: ft.Page):
                 pokazat("Ошибка")
 
         except Exception:
-
             stroka["value"] = ""
-
             pokazat("Ошибка")
 
-    # -----------------------------
-    # Добавление sin / cos / tan
-    # -----------------------------
-
     def dobavit_funkciyu(name):
-
         if stroka["value"] == "0":
             stroka["value"] = ""
 
         stroka["value"] += f"{name}("
-
         pokazat()
 
-    # -----------------------------
-    # Обработка кнопок
-    # -----------------------------
-
     def knopka_nazhata(e):
-
         simvol = e.control.data
 
-        # AC
         if simvol == "AC":
-
             stroka["value"] = ""
-
             pokazat()
-
             return
 
-        # C
         if simvol == "C":
-
             stroka["value"] = stroka["value"][:-1]
-
             pokazat()
-
             return
 
-        # sin / cos / tan
         if simvol in ("sin", "cos", "tan"):
-
             dobavit_funkciyu(simvol)
-
             return
 
-        # Корень
         if simvol == "√":
-
             if stroka["value"] == "0":
                 stroka["value"] = ""
 
             stroka["value"] += "sqrt("
-
             pokazat()
-
             return
 
-        # Равно
         if simvol == "=":
-
             poschitat()
-
             return
 
-        # Остальные кнопки
         if stroka["value"] == "0":
             stroka["value"] = ""
 
         stroka["value"] += str(simvol)
-
         pokazat()
 
-    # -----------------------------
-    # Кнопки
-    # -----------------------------
-
     vse_knopki = [
-
-        ("AC", "AC", "#EF9A9A"),
+        ("AC", "AC", "#EF5350"),
         ("C", "C", "#F8BBD0"),
         ("(", "(", "#F8BBD0"),
         (")", ")", "#F8BBD0"),
@@ -307,25 +245,19 @@ def main(page: ft.Page):
         ("3", "3", "#424242"),
         ("-", "-", "#F8BBD0"),
 
+        ("i", "i", "#F8BBD0"),
         ("0", "0", "#424242"),
         (".", ".", "#424242"),
-        ("=", "=", "#C8E6C9"),
-        ("+", "+", "#F8BBD0"),
+        ("=", "=", "#43A047"),
     ]
-
-    # -----------------------------
-    # Создание кнопок
-    # -----------------------------
 
     buttons = []
 
     for label, data, color in vse_knopki:
-
-        text_color = (
-            "#263238"
-            if color == "#FFD54F"
-            else ft.Colors.WHITE
-        )
+        if color == "#F8BBD0":
+            text_color = "#263238"
+        else:
+            text_color = ft.Colors.WHITE
 
         button = ft.Button(
             content=ft.Text(
@@ -339,22 +271,15 @@ def main(page: ft.Page):
             bgcolor=color,
             height=58,
             style=ft.ButtonStyle(
-                shape=ft.RoundedRectangleBorder(
-                    radius=10
-                ),
+                shape=ft.RoundedRectangleBorder(radius=10),
             ),
         )
 
         buttons.append(button)
 
-    # -----------------------------
-    # Строки кнопок
-    # -----------------------------
-
     rows = []
 
     for i in range(0, len(buttons), 4):
-
         rows.append(
             ft.Row(
                 buttons[i:i + 4],
@@ -363,51 +288,32 @@ def main(page: ft.Page):
             )
         )
 
-    # -----------------------------
-    # Окно калькулятора
-    # -----------------------------
-
     kalkulyator = ft.Container(
         content=ft.Column(
             [
                 ekran,
-
                 ft.Divider(
                     height=4,
                     color=ft.Colors.TRANSPARENT,
                 ),
-
                 *rows,
             ],
-
             spacing=7,
-
-            horizontal_alignment=(
-                ft.CrossAxisAlignment.CENTER
-            ),
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
-
         padding=16,
-
         bgcolor="#263238",
-
         border_radius=18,
-
         border=ft.Border.all(
             1,
-            "#455a64",
+            "#455A64",
         ),
-
         shadow=ft.BoxShadow(
             spread_radius=2,
             blur_radius=20,
             offset=ft.Offset(4, 6),
         ),
     )
-
-    # -----------------------------
-    # Служба поддержки
-    # -----------------------------
 
     podderzhka = ft.Text(
         value="СЛУЖБА ПОДДЕРЖКИ: __________________",
@@ -417,63 +323,38 @@ def main(page: ft.Page):
         text_align=ft.TextAlign.CENTER,
     )
 
-    # -----------------------------
-    # Основной экран
-    # -----------------------------
-
     root = ft.Column(
         [
             welcome_ru,
-
             welcome_en,
-
             ft.Container(height=12),
-
             kalkulyator,
-
             ft.Container(height=10),
-
             podderzhka,
         ],
-
-        horizontal_alignment=(
-            ft.CrossAxisAlignment.CENTER
-        ),
-
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         spacing=0,
     )
 
     page.add(root)
 
-    # -----------------------------
-    # Адаптация под телефон
-    # -----------------------------
-
     def adapt_layout(e=None):
-
         width = page.width or 380
 
-        # Максимальная ширина на компьютере
-        # и автоматическое уменьшение на телефоне.
         calc_width = min(
             380,
             max(280, width - 24),
         )
 
         kalkulyator.width = calc_width
-
         ekran.width = calc_width - 32
 
         inner_width = calc_width - 32
-
-        button_width = (
-            inner_width - 21
-        ) / 4
+        button_width = (inner_width - 21) / 4
 
         for button in buttons:
             button.width = button_width
 
-        # На маленьком экране уменьшаем дисплей.
         if calc_width < 330:
             rezultat.size = 27
             ekran.height = 78
@@ -484,9 +365,6 @@ def main(page: ft.Page):
         page.update()
 
     page.on_resize = adapt_layout
-
     adapt_layout()
 
-
-# Запуск как ASGI-приложение для Render
-app = ft.run(main, export_asgi_app=True)
+app = ft.run(main,export_asgi_app=True,)
