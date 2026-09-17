@@ -55,8 +55,10 @@ def main(page: ft.Page):
 
     def tan_deg(x):
         angle = x * math.pi / 180
+
         if abs(cmath.cos(angle)) < 1e-12:
             raise ValueError("Тангенс не существует")
+
         return cmath.tan(angle)
 
     def sqrt_func(x):
@@ -79,7 +81,13 @@ def main(page: ft.Page):
         if re.search(r"[^0-9+\-*/().a-zA-Z×÷i]", primer):
             raise ValueError("Недопустимые символы")
 
-        return primer.replace("i", "j")
+        primer = re.sub(
+            r"(?<![a-zA-Z])i(?![a-zA-Z])",
+            "j",
+            primer
+        )
+
+        return primer
 
     def vychislit(primer):
         primer = primer.replace("×", "*")
@@ -272,10 +280,17 @@ def main(page: ft.Page):
         else:
             text_color = ft.Colors.WHITE
 
+        if label in ("sin", "cos", "tan"):
+            text_size = 11
+        elif len(label) > 1:
+            text_size = 14
+        else:
+            text_size = 20
+
         button = ft.Button(
             content=ft.Text(
                 value=label,
-                size=14 if len(label) > 1 else 20,
+                size=text_size,
                 weight=ft.FontWeight.BOLD,
                 color=text_color,
                 no_wrap=True,
