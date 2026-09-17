@@ -75,8 +75,10 @@ def main(page: ft.Page):
 
     def podgotovit_complex(primer):
         primer = primer.replace(" ", "")
-        if re.search(r"[^0-9+\-*/().a-zA-Z√×÷i]", primer):
+
+        if re.search(r"[^0-9+\-*/().a-zA-Z×÷i]", primer):
             raise ValueError("Недопустимые символы")
+
         return primer.replace("i", "j")
 
     def vychislit(primer):
@@ -142,8 +144,10 @@ def main(page: ft.Page):
         if isinstance(value, float):
             if abs(value) < 1e-12:
                 value = 0.0
+
             if value.is_integer():
                 return str(int(value))
+
             return f"{value:g}"
 
         return str(value)
@@ -229,6 +233,7 @@ def main(page: ft.Page):
         ("cos", "cos", "#F8BBD0"),
         ("tan", "tan", "#F8BBD0"),
         ("√", "√", "#F8BBD0"),
+        ("i", "i", "#F8BBD0"),
 
         ("7", "7", "#424242"),
         ("8", "8", "#424242"),
@@ -245,10 +250,10 @@ def main(page: ft.Page):
         ("3", "3", "#424242"),
         ("-", "-", "#F8BBD0"),
 
-        ("i", "i", "#F8BBD0"),
         ("0", "0", "#424242"),
         (".", ".", "#424242"),
         ("=", "=", "#43A047"),
+        ("+", "+", "#F8BBD0"),
     ]
 
     buttons = []
@@ -279,14 +284,53 @@ def main(page: ft.Page):
 
     rows = []
 
-    for i in range(0, len(buttons), 4):
-        rows.append(
-            ft.Row(
-                buttons[i:i + 4],
-                alignment=ft.MainAxisAlignment.CENTER,
-                spacing=7,
-            )
+    rows.append(
+        ft.Row(
+            buttons[0:4],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=7,
         )
+    )
+
+    rows.append(
+        ft.Row(
+            buttons[4:9],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=5,
+        )
+    )
+
+    rows.append(
+        ft.Row(
+            buttons[9:13],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=7,
+        )
+    )
+
+    rows.append(
+        ft.Row(
+            buttons[13:17],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=7,
+        )
+    )
+
+    rows.append(
+        ft.Row(
+            buttons[17:21],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=7,
+        )
+    )
+
+    rows.append(
+        ft.Row(
+            buttons[21:25],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=7,
+        )
+    )
 
     kalkulyator = ft.Container(
         content=ft.Column(
@@ -350,10 +394,15 @@ def main(page: ft.Page):
         ekran.width = calc_width - 32
 
         inner_width = calc_width - 32
-        button_width = (inner_width - 21) / 4
+
+        normal_button_width = (inner_width - 21) / 4
+        function_button_width = (inner_width - 20) / 5
 
         for button in buttons:
-            button.width = button_width
+            button.width = normal_button_width
+
+        for button in buttons[4:9]:
+            button.width = function_button_width
 
         if calc_width < 330:
             rezultat.size = 27
