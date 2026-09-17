@@ -128,8 +128,10 @@ def main(page: ft.Page):
             if real == 0:
                 if abs(imag - 1) < 1e-12:
                     return "i"
+
                 if abs(imag + 1) < 1e-12:
                     return "-i"
+
                 return f"{imag:g}i"
 
             sign = "+" if imag >= 0 else "-"
@@ -158,6 +160,12 @@ def main(page: ft.Page):
 
             if not primer:
                 return
+
+            otkrytye = primer.count("(")
+            zakrytye = primer.count(")")
+
+            if otkrytye > zakrytye:
+                primer += ")" * (otkrytye - zakrytye)
 
             answer = vychislit(primer)
             vyvod = krasivoe_chislo(answer)
@@ -267,9 +275,10 @@ def main(page: ft.Page):
         button = ft.Button(
             content=ft.Text(
                 value=label,
-                size=16 if len(label) > 1 else 20,
+                size=14 if len(label) > 1 else 20,
                 weight=ft.FontWeight.BOLD,
                 color=text_color,
+                no_wrap=True,
             ),
             data=data,
             on_click=knopka_nazhata,
@@ -416,4 +425,4 @@ def main(page: ft.Page):
     page.on_resize = adapt_layout
     adapt_layout()
 
-app = ft.run(main,export_asgi_app=True,)
+app = ft.run(main,export_asgi_app=True)
