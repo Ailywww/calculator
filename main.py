@@ -18,34 +18,29 @@ def main(page: ft.Page):
         size=24,
         color="#263238",
         weight=ft.FontWeight.BOLD,
-        text_align=ft.TextAlign.CENTER,
-    )
+        text_align=ft.TextAlign.CENTER)
 
     welcome_en = ft.Text(
         value="Welcome",
         size=18,
         color="#555555",
-        text_align=ft.TextAlign.CENTER,
-    )
+        text_align=ft.TextAlign.CENTER)
 
     rezultat = ft.Text(
         value="0",
         size=32,
         color=ft.Colors.WHITE,
         text_align=ft.TextAlign.RIGHT,
-        weight=ft.FontWeight.BOLD,
-    )
+        weight=ft.FontWeight.BOLD)
 
     ekran = ft.Container(
         content=ft.Row(
             [rezultat],
-            alignment=ft.MainAxisAlignment.END,
-        ),
+            alignment=ft.MainAxisAlignment.END),
         bgcolor="#171717",
         padding=15,
         height=90,
-        border_radius=12,
-    )
+        border_radius=12)
 
     def sin_deg(x):
         return cmath.sin(x * math.pi / 180)
@@ -84,8 +79,7 @@ def main(page: ft.Page):
         primer = re.sub(
             r"(?<![a-zA-Z])i(?![a-zA-Z])",
             "j",
-            primer
-        )
+            primer)
 
         return primer
 
@@ -100,22 +94,14 @@ def main(page: ft.Page):
             .replace("cos", "")
             .replace("tan", "")
             .replace("sqrt", "")
-            .replace("j", "")
-        )
+            .replace("j", ""))
 
         razresheno = set("0123456789.+-*/()")
 
         if not set(proverka).issubset(razresheno):
             raise ValueError("Недопустимые символы")
 
-        bezopasno = {
-            "__builtins__": {},
-            "sin": sin_deg,
-            "cos": cos_deg,
-            "tan": tan_deg,
-            "sqrt": sqrt_func,
-            "j": 1j,
-        }
+        bezopasno = {"__builtins__": {},"sin": sin_deg,"cos": cos_deg,"tan": tan_deg,"sqrt": sqrt_func,"j": 1j}
 
         return eval(primer, bezopasno, {})
 
@@ -126,20 +112,15 @@ def main(page: ft.Page):
 
             if abs(real) < 1e-12:
                 real = 0
-
             if abs(imag) < 1e-12:
                 imag = 0
-
             if imag == 0:
                 return f"{real:g}"
-
             if real == 0:
                 if abs(imag - 1) < 1e-12:
                     return "i"
-
                 if abs(imag + 1) < 1e-12:
                     return "-i"
-
                 return f"{imag:g}i"
 
             sign = "+" if imag >= 0 else "-"
@@ -148,18 +129,14 @@ def main(page: ft.Page):
                 imag_text = "i"
             else:
                 imag_text = f"{abs(imag):g}i"
-
             return f"{real:g} {sign} {imag_text}"
 
         if isinstance(value, float):
             if abs(value) < 1e-12:
                 value = 0.0
-
             if value.is_integer():
                 return str(int(value))
-
             return f"{value:g}"
-
         return str(value)
 
     def poschitat():
@@ -244,33 +221,27 @@ def main(page: ft.Page):
         ("C", "C", "#F8BBD0"),
         ("(", "(", "#F8BBD0"),
         (")", ")", "#F8BBD0"),
-
         ("sin", "sin", "#F8BBD0"),
         ("cos", "cos", "#F8BBD0"),
         ("tan", "tan", "#F8BBD0"),
         ("√", "√", "#F8BBD0"),
         ("i", "i", "#F8BBD0"),
-
         ("7", "7", "#424242"),
         ("8", "8", "#424242"),
         ("9", "9", "#424242"),
         ("÷", "÷", "#F8BBD0"),
-
         ("4", "4", "#424242"),
         ("5", "5", "#424242"),
         ("6", "6", "#424242"),
         ("×", "×", "#F8BBD0"),
-
         ("1", "1", "#424242"),
         ("2", "2", "#424242"),
         ("3", "3", "#424242"),
         ("-", "-", "#F8BBD0"),
-
         ("0", "0", "#424242"),
         (".", ".", "#424242"),
         ("=", "=", "#43A047"),
-        ("+", "+", "#F8BBD0"),
-    ]
+        ("+", "+", "#F8BBD0")]
 
     buttons = []
 
@@ -293,116 +264,82 @@ def main(page: ft.Page):
                 size=text_size,
                 weight=ft.FontWeight.BOLD,
                 color=text_color,
-                no_wrap=True,
-            ),
+                no_wrap=True),
             data=data,
             on_click=knopka_nazhata,
             bgcolor=color,
             height=58,
             style=ft.ButtonStyle(
-                shape=ft.RoundedRectangleBorder(radius=10),
-            ),
-        )
+                shape=ft.RoundedRectangleBorder(radius=10)))
 
         buttons.append(button)
 
     rows = []
 
-    rows.append(
-        ft.Row(
-            buttons[0:4],
-            alignment=ft.MainAxisAlignment.CENTER,
-            spacing=7,
-        )
-    )
+    rows.append(ft.Row(
+        buttons[0:4],
+        alignment=ft.MainAxisAlignment.CENTER,
+        spacing=7))
 
-    rows.append(
-        ft.Row(
-            buttons[4:9],
-            alignment=ft.MainAxisAlignment.CENTER,
-            spacing=5,
-        )
-    )
+    rows.append(ft.Row(
+        buttons[4:9],
+        alignment=ft.MainAxisAlignment.CENTER,
+        spacing=5))
 
-    rows.append(
-        ft.Row(
-            buttons[9:13],
-            alignment=ft.MainAxisAlignment.CENTER,
-            spacing=7,
-        )
-    )
+    rows.append(ft.Row(
+        buttons[9:13],
+        alignment=ft.MainAxisAlignment.CENTER,
+        spacing=7))
 
-    rows.append(
-        ft.Row(
-            buttons[13:17],
-            alignment=ft.MainAxisAlignment.CENTER,
-            spacing=7,
-        )
-    )
+    rows.append(ft.Row(
+        buttons[13:17],
+        alignment=ft.MainAxisAlignment.CENTER,
+        spacing=7))
 
-    rows.append(
-        ft.Row(
-            buttons[17:21],
-            alignment=ft.MainAxisAlignment.CENTER,
-            spacing=7,
-        )
-    )
+    rows.append(ft.Row(
+        buttons[17:21],
+        alignment=ft.MainAxisAlignment.CENTER,
+        spacing=7))
 
-    rows.append(
-        ft.Row(
-            buttons[21:25],
-            alignment=ft.MainAxisAlignment.CENTER,
-            spacing=7,
-        )
-    )
+    rows.append(ft.Row(
+        buttons[21:25],
+        alignment=ft.MainAxisAlignment.CENTER,
+        spacing=7))
 
     kalkulyator = ft.Container(
         content=ft.Column(
-            [
-                ekran,
-                ft.Divider(
-                    height=4,
-                    color=ft.Colors.TRANSPARENT,
-                ),
-                *rows,
-            ],
-            spacing=7,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        ),
-        padding=16,
-        bgcolor="#263238",
+            [ekran,ft.Divider(height=4,color=ft.Colors.TRANSPARENT),*rows],
+            spacing=7,horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+        padding=16,bgcolor="#263238",
         border_radius=18,
-        border=ft.Border.all(
-            1,
-            "#455A64",
-        ),
+        border=ft.Border.all(1,"#455A64"),
         shadow=ft.BoxShadow(
             spread_radius=2,
             blur_radius=20,
-            offset=ft.Offset(4, 6),
-        ),
-    )
+            offset=ft.Offset(4, 6)))
 
-    podderzhka = ft.Text(
-        value="СЛУЖБА ПОДДЕРЖКИ: __________________",
-        size=14,
-        color="#555555",
-        weight=ft.FontWeight.BOLD,
-        text_align=ft.TextAlign.CENTER,
-    )
+    podderzhka = ft.Column([
+        ft.Text(value="Тех. поддержка (телеграм): @calc_support_bot",
+            size=12,
+            color="#555555",
+            weight=ft.FontWeight.BOLD,
+            text_align=ft.TextAlign.CENTER,
+            no_wrap=True),
+        ft.Text(value="Support (Telegram): @calc_support_bot",
+            size=12,
+            color="#555555",
+            weight=ft.FontWeight.BOLD,
+            text_align=ft.TextAlign.CENTER,
+            no_wrap=True)], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2)
 
-    root = ft.Column(
-        [
-            welcome_ru,
+    root = ft.Column([welcome_ru,
             welcome_en,
             ft.Container(height=12),
             kalkulyator,
             ft.Container(height=10),
-            podderzhka,
-        ],
+            podderzhka],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        spacing=0,
-    )
+        spacing=0)
 
     page.add(root)
 
@@ -411,8 +348,7 @@ def main(page: ft.Page):
 
         calc_width = min(
             380,
-            max(280, width - 24),
-        )
+            max(280, width - 24))
 
         kalkulyator.width = calc_width
         ekran.width = calc_width - 32
@@ -440,4 +376,4 @@ def main(page: ft.Page):
     page.on_resize = adapt_layout
     adapt_layout()
 
-app = ft.run(main,export_asgi_app=True)
+app = ft.run(main, export_asgi_app=True)
