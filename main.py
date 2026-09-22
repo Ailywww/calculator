@@ -319,18 +319,9 @@ def main(page: ft.Page):
             offset=ft.Offset(4, 6)))
 
     podderzhka = ft.Column([
-        ft.Text(value="Тех. поддержка (телеграм): @calc_support_bot",
-            size=12,
-            color="#555555",
-            weight=ft.FontWeight.BOLD,
-            text_align=ft.TextAlign.CENTER,
-            no_wrap=True),
-        ft.Text(value="Support (Telegram): @calc_support_bot",
-            size=12,
-            color="#555555",
-            weight=ft.FontWeight.BOLD,
-            text_align=ft.TextAlign.CENTER,
-            no_wrap=True)], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2)
+        ft.Text("Тех. поддержка: @calc_support_bot", size=11, color="#555555", weight=ft.FontWeight.BOLD, no_wrap=True),
+        ft.Text("Support: @calc_support_bot", size=11, color="#555555", weight=ft.FontWeight.BOLD, no_wrap=True),
+        ft.Text("Email: calcut_helper@mail.ru", size=11, color="#555555", weight=ft.FontWeight.BOLD, no_wrap=True)], spacing=1, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
 
     root = ft.Column([welcome_ru,
             welcome_en,
